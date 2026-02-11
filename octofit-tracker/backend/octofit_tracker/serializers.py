@@ -16,14 +16,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
+    member_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Team
-        fields = ['id', 'name', 'description', 'created_at']
+        fields = ['id', 'name', 'description', 'created_at', 'member_count']
 
     def get_id(self, obj):
         """Convert ObjectId to string"""
         return str(obj._id)
+    
+    def get_member_count(self, obj):
+        """Count the number of users in this team"""
+        return User.objects.filter(team_id=str(obj._id)).count()
 
 
 class ActivitySerializer(serializers.ModelSerializer):
